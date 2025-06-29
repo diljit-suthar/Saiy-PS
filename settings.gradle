@@ -1,0 +1,5 @@
+rootProject.name = 'Saiy-PS'
+
+include ':app'
+include ':lapp-debug'
+include ':pocketsphinx-android-5prealpha-nolib'
