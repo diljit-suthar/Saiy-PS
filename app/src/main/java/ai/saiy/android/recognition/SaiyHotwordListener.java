@@ -17,6 +17,12 @@
 
 package ai.saiy.android.recognition;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
 import java.util.regex.Pattern;
@@ -25,10 +31,6 @@ import ai.saiy.android.utils.MyLog;
 import ai.saiy.android.utils.UtilsString;
 import edu.cmu.pocketsphinx.Hypothesis;
 import edu.cmu.pocketsphinx.RecognitionListener;
-
-/**
- * Created by benrandall76@gmail.com on 04/09/2016.
- */
 
 public class SaiyHotwordListener implements RecognitionListener {
 
@@ -56,17 +58,13 @@ public class SaiyHotwordListener implements RecognitionListener {
         hotwordDetected = false;
     }
 
-    public void onHotwordStarted() {
-    }
+    public void onHotwordStarted() {}
 
-    public void onHotwordDetected(@NonNull final String hotword) {
-    }
+    public void onHotwordDetected(@NonNull final String hotword) {}
 
-    public void onHotwordError(final int errorCode) {
-    }
+    public void onHotwordError(final int errorCode) {}
 
-    public void onHotwordShutdown() {
-    }
+    public void onHotwordShutdown() {}
 
     @Override
     public void onBeginningOfSpeech() {
@@ -90,9 +88,7 @@ public class SaiyHotwordListener implements RecognitionListener {
         }
 
         if (hypothesis != null) {
-
             if (!hotwordDetected) {
-
                 final String detected = hypothesis.getHypstr();
 
                 if (DEBUG) {
@@ -100,7 +96,6 @@ public class SaiyHotwordListener implements RecognitionListener {
                 }
 
                 if (UtilsString.notNaked(detected)) {
-
                     hotwordDetected = true;
 
                     if (pOKAY_GOOGLE.matcher(detected.trim()).matches()) {
@@ -121,6 +116,71 @@ public class SaiyHotwordListener implements RecognitionListener {
     public void onResult(final Hypothesis hypothesis) {
         if (DEBUG) {
             MyLog.i(CLS_NAME, "onResult");
+        }
+
+        if (hypothesis != null) {
+            final String fullText = hypothesis.getHypstr().trim().toLowerCase();
+
+            if (UtilsString.notNaked(fullText)) {
+                MyLog.i(CLS_NAME, "Final recognized text: " + fullText);
+
+                Context context = ai.saiy.android.utils.Global.getContext();
+
+                // ============ Call Contact by Name ============
+                if (fullText.startsWith("call ")) {
+                    String nameToFind = fullText.replaceFirst("call ", "").trim();
+
+                    Uri uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;
+                    String[] projection = new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+                    Cursor cursor = context.getContentResolver().query(
+                            uri,
+                            projection,
+                            null,
+                            null,
+                            null
+                    );
+
+                    boolean found = false;
+
+                    if (cursor != null) {
+                        while (cursor.moveToNext()) {
+                            String contactName = cursor.getString(0).toLowerCase();
+                            String phoneNumber = cursor.getString(1);
+
+                            if (contactName.contains(nameToFind)) {
+                                Intent intent = new Intent(Intent.ACTION_CALL);
+                                intent.setData(Uri.parse("tel:" + phoneNumber));
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+
+                                MyLog.i(CLS_NAME, "Calling contact: " + contactName + " - " + phoneNumber);
+                                found = true;
+                                break;
+                            }
+                        }
+                        cursor.close();
+                    }
+
+                    if (!found) {
+                        MyLog.e(CLS_NAME, "Contact '" + nameToFind + "' not found.");
+                    }
+                }
+
+                // ============ OTG On Command ============
+                if (fullText.equals("otg on")) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings$StorageSettingsActivity"));
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+
+                        MyLog.i(CLS_NAME, "Opening OTG settings.");
+                    } catch (Exception e) {
+                        MyLog.e(CLS_NAME, "Failed to open OTG settings: " + e.getMessage());
+                    }
+                }
+            }
         }
     }
 
