@@ -16,28 +16,61 @@
   ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<android.support.v4.widget.DrawerLayout
-    android:id="@+id/drawer_layout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:openDrawer="start">
+    android:background="#121212"
+    android:padding="24dp">
 
-    <include
-        layout="@layout/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <!-- App Icon -->
+    <ImageView
+        android:id="@+id/iconAssistant"
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="Assistant Logo"
+        android:layout_marginTop="32dp"/>
 
-    <android.support.design.widget.NavigationView
-        android:id="@+id/nav_view"
+    <!-- Title -->
+    <TextView
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_main"
-        app:menu="@menu/activity_main_drawer"/>
+        android:layout_height="wrap_content"
+        android:text="Master Voice Assistant"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_below="@id/iconAssistant"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
 
-</android.support.v4.widget.DrawerLayout>
+    <!-- Recognized Text -->
+    <TextView
+        android:id="@+id/recognizedText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Say something..."
+        android:textColor="#CCCCCC"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:layout_below="@id/titleText"
+        android:layout_marginTop="24dp"
+        android:padding="12dp"/>
+
+    <!-- Mic Button (Floating style) -->
+    <ImageButton
+        android:id="@+id/micButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@android:drawable/ic_btn_speak_now"
+        android:background="@drawable/rounded_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="32dp"
+        android:contentDescription="Voice button"
+        android:padding="16dp"/>
+
+</RelativeLayout>
