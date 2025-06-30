@@ -14,12 +14,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+ 
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.protobuf'
 
 android {
-
     dexOptions {
         jumboMode true
         preDexLibraries = false
@@ -27,13 +26,13 @@ android {
         javaMaxHeapSize "6g"
     }
 
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 31 // Update this to the latest version you need, 31 or 33 are good options.
+    buildToolsVersion '30.0.3'
 
     defaultConfig {
         applicationId "ai.saiy.android"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 31 // Match this with compileSdkVersion
         versionCode 3
         versionName "1.0.3"
         multiDexEnabled true
