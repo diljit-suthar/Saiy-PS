@@ -16,10 +16,9 @@
  */
  
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.protobuf'
-
-android {
-    dexOptions {
+apply plugin: 'com.google.protobuf:protoc:3.23.4'
+android 
+    dexOptions 
         jumboMode true
         preDexLibraries = false
         maxProcessCount 4
